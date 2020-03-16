@@ -16,6 +16,11 @@ Vue.prototype.$http = axios
 // 导入基本全局样式
 import './assets/css/base.css'
 
+//table插件
+import ZkTable from 'vue-table-with-tree-grid'
+
+Vue.component('tree-table', ZkTable)
+
 Vue.config.productionTip = false
 
 new Vue({
