@@ -40,10 +40,18 @@
           <el-tag size="mini" v-else type="warning">三级</el-tag>
         </template>
         <template v-slot:opt="scope">
-          <el-button size="mini" type="primary" icon="el-icon-edit"
+          <el-button
+            @click="editCate(scope.row)"
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
             >编辑</el-button
           >
-          <el-button size="mini" type="danger" icon="el-icon-delete"
+          <el-button
+            @click="deleteCate(scope.row)"
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
             >删除</el-button
           >
         </template>
@@ -86,6 +94,26 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="cateClosed">取 消</el-button>
         <el-button type="primary" @click="cateSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="修改分类"
+      :visible.sync="setCateEditDialogVisible"
+      width="50%"
+    >
+      <el-form
+        :model="cateEditForm"
+        :rules="cateRules"
+        ref="cateEditFormRef"
+        label-width="100px"
+      >
+        <el-form-item label="分类名称：" prop="cat_name">
+          <el-input v-model="cateEditForm.cat_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cateEditClosed">取 消</el-button>
+        <el-button type="primary" @click="cateEditSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -143,7 +171,12 @@ export default {
         value: "cat_id",
         label: "cat_name",
         children: "children"
-      }
+      },
+      setCateEditDialogVisible: false,
+      cateEditForm: {
+        cat_name: ""
+      },
+      choseEditInfo: {}
     };
   },
   created() {
@@ -213,6 +246,56 @@ export default {
         this.getGoodsCate();
         this.cateClosed();
       });
+    },
+    editCate(cateInfo) {
+      console.log(cateInfo);
+      this.choseEditInfo = cateInfo;
+      this.cateEditForm.cat_name = cateInfo.cat_name;
+      this.setCateEditDialogVisible = true;
+    },
+    cateEditClosed() {
+      this.choseEditInfo = {};
+      this.$refs.cateEditFormRef.resetFields();
+      this.setCateEditDialogVisible = false;
+    },
+    cateEditSubmit() {
+      console.log(this.choseEditInfo.cat_id);
+      this.$refs.cateEditFormRef.validate(async valid => {
+        if (!valid) return;
+        const { data: res } = await this.$http.put(
+          `categories/${this.choseEditInfo.cat_id}`,
+          {
+            cat_name: this.cateEditForm.cat_name
+          }
+        );
+        console.log(res);
+
+        if (res.meta.status !== 200) return this.$message.error("分类修改失败");
+        this.$message.success("分类修改成功");
+        this.getGoodsCate();
+        this.cateEditClosed();
+      });
+    },
+    async deleteCate(cateInfo) {
+      const result = await this.$confirm(
+        "此操作将永久删除该分类, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).catch(err => err);
+      if (result !== "confirm") {
+        return this.$message.info("已取消删除");
+      }
+      const { data: res } = await this.$http.delete(
+        `categories/${cateInfo.cat_id}`
+      );
+      console.log(res);
+      if (res.meta.status !== 200) return this.$message.error("分类删除失败");
+      this.$message.success("分类删除成功");
+      this.getGoodsCate();
     }
   }
 };
