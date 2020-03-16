@@ -20,20 +20,24 @@
           router
           :default-active="navActive"
         >
-          <el-submenu :index="item.id + ''" v-for="item in menuList" :key="item.id">
+          <el-submenu
+            :index="item.id + ''"
+            v-for="item in menuList"
+            :key="item.id"
+          >
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>{{item.authName}}</span>
+              <span>{{ item.authName }}</span>
             </template>
             <el-menu-item
               :index="'/' + subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
-              @click="saveNavActive($route.path)"
+              @click="saveNavActive()"
             >
               <template slot="title">
                 <i class="el-icon-menu"></i>
-                <span>{{subItem.authName}}</span>
+                <span>{{ subItem.authName }}</span>
               </template>
             </el-menu-item>
           </el-submenu>
@@ -53,12 +57,12 @@ export default {
     return {
       menuList: [],
       isCollapse: false,
-      navActive: ''
+      navActive: ""
     };
   },
   created() {
     this.getMenuList();
-    this.navActive = window.sessionStorage.getItem('navPath')
+    this.navActive = window.sessionStorage.getItem("navPath");
   },
   methods: {
     logout() {
@@ -72,11 +76,12 @@ export default {
       this.menuList = res.data;
     },
     toggleMenu() {
-      this.isCollapse = !this.isCollapse
+      this.isCollapse = !this.isCollapse;
     },
-    saveNavActive(path) {
-      window.sessionStorage.setItem('navPath', path)
-      this.navActive = path
+    saveNavActive() {
+      let path = this.$route.path;
+      window.sessionStorage.setItem("navPath", path);
+      this.navActive = path;
     }
   }
 };
@@ -110,7 +115,7 @@ export default {
   .toggle-btn {
     color: #fff;
     font-size: 14px;
-    letter-spacing: .2em;
+    letter-spacing: 0.2em;
     padding: 10px;
   }
   .el-menu {
