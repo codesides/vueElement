@@ -33,7 +33,7 @@
               :index="'/' + subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
-              @click="saveNavActive()"
+              @click="saveNavActive('/' + subItem.path)"
             >
               <template slot="title">
                 <i class="el-icon-menu"></i>
@@ -78,10 +78,10 @@ export default {
     toggleMenu() {
       this.isCollapse = !this.isCollapse;
     },
-    saveNavActive() {
-      let path = this.$route.path;
+    saveNavActive(path) {
+      // let path = this.$route.path;
       window.sessionStorage.setItem("navPath", path);
-      this.navActive = path;
+      // this.navActive = path;
     }
   }
 };
