@@ -19,3 +19,7 @@ body,
 .el-pagination {
     margin-top: 15px;
 }
+
+.ql-container {
+    height: 300px !important;
+}
